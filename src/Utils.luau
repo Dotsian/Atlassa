@@ -29,7 +29,7 @@ end
 
 function Utils.HasProperty(Object: Instance, Property: string): boolean
 	local Success, _ = pcall(function()
-		(Object :: any)[Property] = (Object :: any)[Property]
+		return (Object :: any)[Property]
 	end)
 
 	return Success
