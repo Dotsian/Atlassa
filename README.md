@@ -1,4 +1,4 @@
-# Atlassa - SSA UI Library - [BETA]
+# Atlassa - SSA UI Library - v1.2.0
 
 ![Atlassa Banner](https://raw.githubusercontent.com/Dotsian/Atlassa/refs/heads/main/Assets/Banner.png)
 
@@ -14,67 +14,39 @@ You can run this command in Roblox Studio to install the Atlassa package into `R
 loadstring(game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com/Dotsian/Atlassa/main/Installer.luau"))()
 ```
 
-## Creating a UI state manager
+## UI Managers
 
-A UI state manager is a script that loads all UI states. Here is an example of a basic UI state manager.
-
-<details>
-
-<summary>UI state manager template</summary>
+A UI state manager loads, destroys, and handles all UI states. You can load all your UI states using the following code:
 
 ```luau
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Atlassa = require(ReplicatedStorage.Atlassa)
 
 local Player = Players.LocalPlayer
+local States = Player.PlayerGui:WaitForChild("States")
 
-local ActiveStates = {}
+local Manager = Atlassa.Manager.new()
 
-function LoadStates()
-    local FailedToLoad = {}
+Player.CharacterAdded:Connect(function()
+    States = Player.PlayerGui:WaitForChild("States")
 
-    for _, State in Player.PlayerGui:WaitForChild("States"):GetChildren() do
-        if not State:IsA("ModuleScript") then
-            continue
-        end
+    Manager:Load(States:GetChildren())
+end)
 
-        local Success, Result = pcall(function()
-            return require(State)
-        end)
+Player.CharacterRemoving:Connect(function()
+    Manager:Unload()
+end)
 
-        if not Success then
-            table.insert(FailedToLoad, State.Name)
-            continue
-        end
-
-        table.insert(ActiveStates, Result)
-    end
-
-    if FailedToLoad == {} then
-        return
-    end
-
-    for _, State in FailedToLoad do
-        warn(`Failed to load '{State}' UI state`)
-    end
-end
-
-function ClearStates()
-    for _, State in ActiveStates do
-        if not State or not State["Destroy"] then
-            continue
-        end
-
-        State:Destroy()
-    end
-end
-
-Player.CharacterAdded:Connect(LoadStates)
-Player.CharacterRemoving:Connect(ClearStates)
-
-LoadStates()
+Manager:Load(States:GetChildren())
 ```
 
-</details>
+This will load all UI states when the character is added and unload them when the character is removed. You can also destroy the manager using the `Manager:Destroy` method.
+
+```luau
+Manager:Destroy() -- Unloads all UI states and prevents this manager from ever being used again.
+```
 
 ## UI States
 
@@ -157,7 +129,7 @@ return Atlassa.UI.Mount({
 })
 ```
 
-## UI Network
+## UI Networking
 
 UI networking is a way to establish client-to-client communication in your UI states or components.
 
@@ -170,8 +142,8 @@ Atlassa.Network:Signal("Testing", function(Message: string)
 end)
 ```
 
-You can then fire this signal from any module or local script by using the `Network:WaitThenCall` method.
+You can then fire this signal from any module or local script by using the `Network:Call` method.
 
 ```luau
-Atlassa.Network:WaitThenCall("Testing", "Message passed!")
+Atlassa.Network:Call("Testing", "Message passed!")
 ```

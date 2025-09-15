@@ -10,6 +10,7 @@ local Files = {
 	"Registry.luau",
 	"Types.luau",
 	"UI.luau",
+	"Manager.luau",
 	"Utils.luau"
 }
 

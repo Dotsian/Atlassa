@@ -39,13 +39,13 @@ Waits for a UI signal then fires it.
 
 <strong>Name</strong>:			The name of the UI signal to fire.
 ]]
-function Network:WaitThenCall(Name: string, ...)
+function Network:Call(Name: string, ...)
 	local StartTime = tick()
 	local Warned = false
 
 	while not Signals[Name] do
 		if (tick() - StartTime) > 5 and not Warned then
-			warn(`Infinite yield possible on '{script.Name}:WaitThenCall("{Name}")'`)
+			warn(`Infinite yield possible on '{script.Name}:Call("{Name}")'`)
 			Warned = true
 		end
 

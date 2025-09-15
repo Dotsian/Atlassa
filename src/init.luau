@@ -3,6 +3,7 @@
 
 -- `Cache`
 -- `Network`
+-- `Manager`
 
 local PACKAGES = script.Parent
 
@@ -13,7 +14,7 @@ local PACKAGES_REQUIRED = {
 	Signal = "https://github.com/stravant/goodsignal",
 }
 
-local VERSION = "1.1.0"
+local VERSION = "1.2.0"
 
 ------------------------------------------------------------------------------------------------------------------------
 
@@ -34,7 +35,7 @@ for Package, Link in PACKAGES_REQUIRED do
 	CheckForPackage(Package, Link)
 end
 
-if LogDump ~= {} then
+if #LogDump > 0 then
 	for _, Log in LogDump do
 		warn(Log)
 	end
@@ -49,5 +50,7 @@ export type Connections = Types.Connections
 return {
 	Network = require(script.Network),
 	UI = require(script.UI),
+	Manager = require(script.Manager),
+	
 	_VERSION = VERSION,
 }

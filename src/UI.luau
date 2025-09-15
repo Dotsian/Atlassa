@@ -2,6 +2,8 @@
 
 local UI = {}
 
+local ContentProvider = game:GetService("ContentProvider")
+
 local Cache = require(script.Parent.Cache)
 local Utils = require(script.Parent.Utils)
 
@@ -19,6 +21,15 @@ function UI.Template(Object: GuiObject, Properties: { [string]: any }?): GuiObje
 	Utils.ApplyProperties(Clone, Properties)
 
 	return Clone
+end
+
+--[[
+Preloads an object using <code>ContentProvider:PreloadAsync()</code>.
+
+<strong>Object</strong>:			The object you want to preload.
+]]
+function UI.Preload(Object: GuiObject)
+	ContentProvider:PreloadAsync({Object})
 end
 
 function UI.Mount(...)
