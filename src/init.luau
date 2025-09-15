@@ -4,24 +4,41 @@
 -- `Cache`
 -- `Network`
 
-local PACKAGES = game.ReplicatedStorage.Packages
+local PACKAGES = script.Parent
 
 ------------------------------------------------------------------------------------------------------------------------
 
-local PackageError = false
+local PACKAGES_REQUIRED = {
+	Janitor = "https://github.com/howmanysmall/Janitor",
+	Signal = "https://github.com/stravant/goodsignal",
+}
+
+local VERSION = "1.1.0"
+
+------------------------------------------------------------------------------------------------------------------------
+
+local LogDump = {}
 local Types = require(script.Types)
 
-if not PACKAGES:FindFirstChild("Janitor") then
-	warn("Missing Janitor package for Atlassa, you can install it here: https://github.com/howmanysmall/Janitor")
-	PackageError = true
+local function CheckForPackage(Package: string, Link: string)
+	local Retrieved = PACKAGES:FindFirstChild(Package)
+
+	if Retrieved and Retrieved:IsA("ModuleScript") then
+		return
+	end
+	
+	table.insert(LogDump, "Missing " .. Package .. " package for Atlassa, you can install it here: " .. Link)
 end
 
-if not PACKAGES:FindFirstChild("Signal") then
-	warn("Missing Signal package for Atlassa, you can install it here: https://github.com/stravant/goodsignal")
-	PackageError = true
+for Package, Link in PACKAGES_REQUIRED do
+	CheckForPackage(Package, Link)
 end
 
-if PackageError then
+if LogDump ~= {} then
+	for _, Log in LogDump do
+		warn(Log)
+	end
+	
 	error("One or more dependencies are missing for Atlassa")
 end
 
@@ -32,4 +49,5 @@ export type Connections = Types.Connections
 return {
 	Network = require(script.Network),
 	UI = require(script.UI),
+	_VERSION = VERSION,
 }
