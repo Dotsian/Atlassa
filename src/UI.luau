@@ -24,12 +24,16 @@ function UI.Template(Object: GuiObject, Properties: { [string]: any }?): GuiObje
 end
 
 --[[
-Preloads an object using <code>ContentProvider:PreloadAsync()</code>.
+Preloads an object or a list of objects using <code>ContentProvider:PreloadAsync()</code>.
 
-<strong>Object</strong>:			The object you want to preload.
+<strong>Object</strong>:			The object(s) you want to preload.
 ]]
-function UI.Preload(Object: GuiObject)
-	ContentProvider:PreloadAsync({Object})
+function UI.Preload(Object: GuiObject | { GuiObject })
+	if typeof(Object) ~= "table" then
+		Object = { Object }
+	end
+	
+	ContentProvider:PreloadAsync(Object)
 end
 
 function UI.Mount(...)
@@ -53,3 +57,4 @@ end
 ------------------------------------------------------------------------------------------------------------------------
 
 return UI
+
